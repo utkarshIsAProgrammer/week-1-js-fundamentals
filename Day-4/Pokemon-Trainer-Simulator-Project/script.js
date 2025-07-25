@@ -20,17 +20,17 @@ class Trainer {
 	}
 
 	get StrongestPokemon() {
-		if (this.pokemons.length === 0) return "You don't have a pokemon!";
+		if (this.pokemons.length === 0) return "You don't have a Pokémon!";
 		const strongest = this.pokemons.reduce((max, current) => {
 			return current.HP > max.HP ? current : max;
 		});
-
-		return `${strongest.name} is the strongest Pokemon with ${strongest.HP} HP.`;
+		return `${strongest.name} is the strongest Pokémon with ${strongest.HP} HP.`;
 	}
 
 	battle() {
 		if (this.pokemons.length === 0) {
-			return "No pokemons left to battle!";
+			console.log("No Pokémons left to battle!");
+			return;
 		}
 		const fighter =
 			this.pokemons[Math.floor(Math.random() * this.pokemons.length)];
@@ -58,35 +58,59 @@ class Pokemon {
 	}
 }
 
-const trainer = new Trainer(
-	prompt("Welcome to the Pokemon World! What's your name? : ")
-);
+// Trainer setup with basic validation
+let trainerName = "";
+while (!trainerName.trim()) {
+	trainerName = prompt("Welcome to the Pokémon World! What's your name? : ");
+	if (!trainerName.trim()) {
+		console.log("Name can't be empty!");
+	}
+}
+const trainer = new Trainer(trainerName);
 
 while (true) {
 	console.log(`
-Here You Can.....\n
+------------------------------
+What would you like to do?\n
 1. Catch a Pokémon
 2. View Team Size
 3. View Strongest Pokémon
 4. Battle Random Pokémon
 5. Quit
-	`);
+------------------------------`);
 
-	const choice = prompt("Choose an action (1 to 5): ");
+	const choice = prompt("Choose an action (1 to 5): ").trim();
 
-	if (choice === "1") {
-		const name = prompt("Enter Pokémon name: ");
-		const type = prompt("Enter Pokémon type: ");
-		const hp = Number(prompt("Enter Pokémon HP (1 to 100): "));
-		trainer.catchPokemon(new Pokemon(name, type, hp));
-	} else if (choice === "2") {
-		console.log(trainer.TeamSize);
-	} else if (choice === "3") {
-		console.log(trainer.StrongestPokemon);
-	} else if (choice === "4") {
-		trainer.battle();
-	} else if (choice === "5") {
-		console.log("Thanks for playing! See you next time!");
-		break;
+	try {
+		if (choice === "1") {
+			const name = prompt("Enter Pokémon name: ").trim();
+			const type = prompt("Enter Pokémon type: ").trim();
+			let hp = Number(prompt("Enter Pokémon HP (1 to 100): ").trim());
+
+			// Error handling for invalid inputs
+			if (!name || !type) {
+				throw new Error("Pokémon name and type cannot be empty.");
+			}
+			if (isNaN(hp) || hp < 1 || hp > 100) {
+				throw new Error("HP must be a number between 1 and 100.");
+			}
+
+			trainer.catchPokemon(new Pokemon(name, type, hp));
+		} else if (choice === "2") {
+			console.log(trainer.TeamSize);
+		} else if (choice === "3") {
+			console.log(trainer.StrongestPokemon);
+		} else if (choice === "4") {
+			trainer.battle();
+		} else if (choice === "5") {
+			console.log("Thanks for playing! See you next time!");
+			break;
+		} else {
+			console.log(
+				"Invalid choice. Please enter a number between 1 and 5."
+			);
+		}
+	} catch (err) {
+		console.log("❌ Error:", err.message);
 	}
 }
