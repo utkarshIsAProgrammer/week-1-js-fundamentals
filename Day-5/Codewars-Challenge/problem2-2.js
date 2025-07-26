@@ -13,8 +13,14 @@ const high = (x) =>
 	x
 		.split(" ")
 		.reduce((best, word) =>
-			[...word].reduce((s, c) => s + c.charCodeAt(0) - 96, 0) >
-			[...best].reduce((s, c) => s + c.charCodeAt(0) - 96, 0)
+			[...word].reduce(
+				(score, char) => score + char.charCodeAt(0) - 96,
+				0
+			) >
+			[...best].reduce(
+				(score, char) => score + char.charCodeAt(0) - 96,
+				0
+			)
 				? word
 				: best
 		);
